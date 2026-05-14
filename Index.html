@@ -1,0 +1,1282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Tech4Dev Certificate Generator</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet"/>
+<style>
+/* ═══════════════════════════════════════════
+   ROOT & RESET
+═══════════════════════════════════════════ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --navy:    #0D1B3E;
+  --navy2:   #162454;
+  --purple:  #7B2D8B;
+  --purple2: #4A0050;
+  --pink:    #D4A8E0;
+  --blue:    #1A5EBF;
+  --yellow:  #F5C518;
+  --green:   #1A7F4B;
+  --red:     #E03030;
+  --white:   #FFFFFF;
+  --offwht:  #F8F9FC;
+  --gray:    #6B7280;
+  --lgray:   #E5E7EB;
+  --dkgray:  #374151;
+  --font-display: 'Playfair Display', Georgia, serif;
+  --font-body:    'DM Sans', system-ui, sans-serif;
+  --font-cert:    'Cormorant Garamond', Georgia, serif;
+}
+
+html, body { height: 100%; }
+body {
+  font-family: var(--font-body);
+  background: #0a0f1e;
+  color: var(--white);
+  overflow-x: hidden;
+}
+
+/* ═══════════════════════════════════════════
+   LANDING PAGE
+═══════════════════════════════════════════ */
+#landing {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 24px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* animated background mesh */
+#landing::before {
+  content: '';
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse 80% 60% at 20% 20%, rgba(123,45,139,0.25) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 80% at 80% 80%, rgba(13,27,62,0.8) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 50% at 60% 10%, rgba(26,94,191,0.15) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+/* floating orbs */
+.orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(60px);
+  opacity: 0.4;
+  animation: drift 8s ease-in-out infinite alternate;
+  pointer-events: none;
+}
+.orb-1 { width: 300px; height: 300px; background: var(--purple); top: -80px; left: -80px; animation-delay: 0s; }
+.orb-2 { width: 200px; height: 200px; background: var(--blue); bottom: 10%; right: 5%; animation-delay: 3s; }
+.orb-3 { width: 150px; height: 150px; background: var(--pink); top: 50%; left: 60%; animation-delay: 1.5s; }
+@keyframes drift { from { transform: translate(0,0) scale(1); } to { transform: translate(30px, 20px) scale(1.1); } }
+
+.landing-inner {
+  position: relative; z-index: 1;
+  text-align: center; max-width: 760px;
+}
+
+.brand-logo {
+  display: inline-flex; align-items: center; gap: 10px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 100px;
+  padding: 8px 20px;
+  font-size: 13px; font-weight: 600;
+  letter-spacing: 0.08em; color: rgba(255,255,255,0.7);
+  margin-bottom: 40px;
+  backdrop-filter: blur(8px);
+}
+.brand-logo span { color: var(--purple); }
+
+.landing-title {
+  font-family: var(--font-display);
+  font-size: clamp(38px, 7vw, 72px);
+  font-weight: 900;
+  line-height: 1.05;
+  margin-bottom: 20px;
+  background: linear-gradient(135deg, #fff 0%, rgba(212,168,224,0.9) 50%, #fff 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.landing-sub {
+  font-size: 17px; font-weight: 400;
+  color: rgba(255,255,255,0.55);
+  line-height: 1.6; margin-bottom: 48px;
+}
+
+/* program cards on landing */
+.program-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  margin-bottom: 40px;
+  text-align: left;
+}
+
+.prog-card {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 16px;
+  padding: 20px;
+  cursor: pointer;
+  transition: all 0.25s;
+  position: relative;
+  overflow: hidden;
+  backdrop-filter: blur(8px);
+}
+.prog-card::before {
+  content: '';
+  position: absolute; inset: 0;
+  opacity: 0; transition: opacity 0.25s;
+}
+.prog-card:hover { transform: translateY(-3px); border-color: rgba(255,255,255,0.25); }
+.prog-card:hover::before { opacity: 1; }
+
+.prog-card.wt  { --card-accent: var(--purple); }
+.prog-card.wt::before  { background: linear-gradient(135deg, rgba(123,45,139,0.15), transparent); }
+.prog-card.wl  { --card-accent: #9B35AE; }
+.prog-card.wl::before  { background: linear-gradient(135deg, rgba(155,53,174,0.15), transparent); }
+.prog-card.bdei { --card-accent: var(--green); }
+.prog-card.bdei::before { background: linear-gradient(135deg, rgba(26,127,75,0.15), transparent); }
+.prog-card.df  { --card-accent: var(--blue); }
+.prog-card.df::before  { background: linear-gradient(135deg, rgba(26,94,191,0.15), transparent); }
+
+.prog-card-icon {
+  font-size: 28px; margin-bottom: 10px; display: block;
+}
+.prog-card-name {
+  font-size: 13px; font-weight: 700;
+  color: var(--card-accent);
+  text-transform: uppercase; letter-spacing: 0.06em;
+  margin-bottom: 4px;
+}
+.prog-card-desc { font-size: 12px; color: rgba(255,255,255,0.45); line-height: 1.5; }
+.prog-card-arrow {
+  position: absolute; top: 16px; right: 16px;
+  font-size: 18px; color: rgba(255,255,255,0.2);
+  transition: all 0.2s;
+}
+.prog-card:hover .prog-card-arrow { color: var(--card-accent); transform: translate(3px,-3px); }
+
+.cta-btn {
+  display: inline-flex; align-items: center; gap: 10px;
+  background: linear-gradient(135deg, var(--purple), #9B35AE);
+  color: white; border: none; border-radius: 100px;
+  padding: 16px 40px; font-size: 16px; font-weight: 600;
+  cursor: pointer; transition: all 0.25s;
+  box-shadow: 0 8px 32px rgba(123,45,139,0.4);
+  font-family: var(--font-body);
+}
+.cta-btn:hover { transform: translateY(-2px); box-shadow: 0 12px 40px rgba(123,45,139,0.55); }
+
+/* ═══════════════════════════════════════════
+   APP (DASHBOARD)
+═══════════════════════════════════════════ */
+#app { display: none; min-height: 100vh; flex-direction: column; background: var(--offwht); }
+
+/* TOP NAV */
+.app-nav {
+  background: var(--navy);
+  padding: 0 24px;
+  display: flex; align-items: center; gap: 16px;
+  height: 56px; flex-shrink: 0;
+  border-bottom: 1px solid rgba(255,255,255,0.07);
+}
+.nav-logo {
+  font-family: var(--font-display);
+  font-size: 15px; font-weight: 700;
+  color: white; letter-spacing: 0.02em; margin-right: auto;
+}
+.nav-logo span { color: var(--pink); }
+.nav-back {
+  background: rgba(255,255,255,0.08); border: none; border-radius: 8px;
+  color: rgba(255,255,255,0.6); font-size: 12px; font-weight: 500;
+  padding: 6px 14px; cursor: pointer; font-family: var(--font-body);
+}
+.nav-back:hover { background: rgba(255,255,255,0.15); color: white; }
+
+/* MAIN LAYOUT */
+.app-body {
+  display: grid;
+  grid-template-columns: 380px 1fr;
+  flex: 1;
+  overflow: hidden;
+  height: calc(100vh - 56px);
+}
+
+/* LEFT PANEL */
+.left-panel {
+  background: white;
+  border-right: 1px solid var(--lgray);
+  overflow-y: auto;
+  padding: 24px;
+  display: flex; flex-direction: column; gap: 20px;
+}
+
+.panel-section {
+  background: var(--offwht);
+  border: 1px solid var(--lgray);
+  border-radius: 12px;
+  overflow: hidden;
+}
+.panel-section-head {
+  padding: 12px 16px;
+  display: flex; align-items: center; gap: 8px;
+  border-bottom: 1px solid var(--lgray);
+  font-size: 11px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.08em;
+  color: var(--gray);
+  background: white;
+}
+.panel-section-head .dot {
+  width: 8px; height: 8px; border-radius: 50%;
+}
+.panel-section-body { padding: 16px; }
+
+label {
+  display: block; font-size: 12px; font-weight: 600;
+  color: var(--dkgray); margin-bottom: 6px;
+}
+select, input[type="text"], input[type="date"] {
+  width: 100%; padding: 9px 12px;
+  border: 1px solid var(--lgray); border-radius: 8px;
+  font-size: 13px; font-family: var(--font-body);
+  color: var(--dkgray); background: white;
+  outline: none; transition: border-color 0.15s;
+  appearance: none;
+}
+select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236B7280' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; padding-right: 36px; }
+select:focus, input:focus { border-color: var(--purple); box-shadow: 0 0 0 3px rgba(123,45,139,0.1); }
+
+.form-row { margin-bottom: 14px; }
+.form-row:last-child { margin-bottom: 0; }
+
+/* program badge shown in panel */
+.prog-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 4px 12px; border-radius: 100px;
+  font-size: 11px; font-weight: 700; letter-spacing: 0.05em;
+  margin-bottom: 12px;
+}
+
+/* name input area */
+.name-tabs { display: flex; gap: 0; margin-bottom: 12px; border: 1px solid var(--lgray); border-radius: 8px; overflow: hidden; }
+.name-tab {
+  flex: 1; padding: 8px; text-align: center; font-size: 12px; font-weight: 600;
+  color: var(--gray); cursor: pointer; background: var(--offwht);
+  transition: all 0.15s; border: none; font-family: var(--font-body);
+}
+.name-tab.active { background: var(--navy); color: white; }
+
+textarea {
+  width: 100%; padding: 9px 12px;
+  border: 1px solid var(--lgray); border-radius: 8px;
+  font-size: 12px; font-family: var(--font-body);
+  color: var(--dkgray); background: white;
+  resize: vertical; min-height: 80px; outline: none;
+}
+textarea:focus { border-color: var(--purple); box-shadow: 0 0 0 3px rgba(123,45,139,0.1); }
+
+.file-drop {
+  border: 2px dashed var(--lgray); border-radius: 8px;
+  padding: 20px; text-align: center; cursor: pointer;
+  transition: all 0.2s;
+}
+.file-drop:hover { border-color: var(--purple); background: rgba(123,45,139,0.03); }
+.file-drop input { display: none; }
+.file-drop-icon { font-size: 24px; margin-bottom: 6px; }
+.file-drop-text { font-size: 12px; color: var(--gray); }
+.file-drop-text strong { color: var(--purple); }
+
+.names-list {
+  margin-top: 10px; display: flex; flex-direction: column; gap: 4px;
+  max-height: 120px; overflow-y: auto;
+}
+.name-chip {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 6px 10px; background: white;
+  border: 1px solid var(--lgray); border-radius: 6px;
+  font-size: 12px; color: var(--dkgray);
+}
+.name-chip.active { border-color: var(--purple); background: rgba(123,45,139,0.05); font-weight: 600; }
+.name-chip-btns { display: flex; gap: 4px; }
+.chip-btn {
+  background: none; border: none; cursor: pointer;
+  font-size: 14px; color: var(--gray); padding: 0 2px;
+  font-family: var(--font-body);
+}
+.chip-btn:hover { color: var(--navy); }
+
+/* nav arrows for names */
+.name-nav { display: flex; gap: 6px; margin-top: 8px; }
+.name-nav-btn {
+  flex: 1; padding: 7px; border: 1px solid var(--lgray);
+  border-radius: 8px; background: white; cursor: pointer;
+  font-size: 13px; color: var(--dkgray); font-family: var(--font-body);
+  transition: all 0.15s;
+}
+.name-nav-btn:hover { border-color: var(--purple); color: var(--purple); }
+.name-counter { text-align: center; font-size: 11px; color: var(--gray); margin-top: 6px; }
+
+/* signature select */
+.sig-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.sig-preview { margin-top: 6px; font-family: 'Brush Script MT', cursive; font-size: 18px; color: var(--navy); min-height: 28px; }
+
+/* action buttons */
+.action-row { display: flex; gap: 8px; flex-direction: column; }
+.btn-primary {
+  width: 100%; padding: 12px; border: none; border-radius: 10px;
+  font-size: 14px; font-weight: 700; cursor: pointer;
+  font-family: var(--font-body); transition: all 0.2s;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+}
+.btn-download {
+  background: linear-gradient(135deg, var(--purple), #9B35AE);
+  color: white; box-shadow: 0 4px 16px rgba(123,45,139,0.35);
+}
+.btn-download:hover { transform: translateY(-1px); box-shadow: 0 6px 24px rgba(123,45,139,0.45); }
+.btn-download-all {
+  background: var(--navy); color: white;
+}
+.btn-download-all:hover { background: var(--navy2); }
+.btn-outline {
+  background: white; color: var(--dkgray);
+  border: 1px solid var(--lgray); font-weight: 500;
+}
+.btn-outline:hover { border-color: var(--purple); color: var(--purple); }
+
+/* RIGHT PANEL — certificate preview */
+.right-panel {
+  overflow-y: auto;
+  background: #e8eaf0;
+  display: flex; align-items: flex-start; justify-content: center;
+  padding: 32px 24px;
+}
+
+.cert-wrapper {
+  width: 100%;
+  max-width: 860px;
+}
+
+.cert-toolbar {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 16px;
+}
+.cert-label { font-size: 12px; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.06em; }
+.cert-zoom { display: flex; gap: 6px; }
+.zoom-btn {
+  background: white; border: 1px solid #d1d5db; border-radius: 6px;
+  padding: 4px 10px; font-size: 12px; cursor: pointer; color: #374151;
+  font-family: var(--font-body);
+}
+.zoom-btn:hover { border-color: var(--purple); color: var(--purple); }
+
+/* THE CERTIFICATE itself */
+.certificate {
+  background: white;
+  width: 100%;
+  aspect-ratio: 1.414 / 1;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 20px 80px rgba(0,0,0,0.25);
+  border-radius: 2px;
+  font-family: var(--font-cert);
+  transition: transform 0.2s;
+  transform-origin: top center;
+}
+
+/* ── WOMEN TECHSTERS BOOTCAMP / LAUNCHPAD TEMPLATE ── */
+.cert-wt, .cert-wl {
+  --c1: #4A0050;
+  --c2: #7B2D8B;
+  --c3: #D4A8E0;
+}
+
+/* corner squares */
+.cert-corner { position: absolute; }
+.cert-corner-tl-big  { top: 0; left: 0; width: 9%; aspect-ratio: 1; background: var(--c1); }
+.cert-corner-tl-sm   { top: 4.5%; left: 5.5%; width: 4%; aspect-ratio: 1; background: var(--c3); }
+.cert-corner-br-big  { bottom: 0; right: 0; width: 9%; aspect-ratio: 1; background: var(--c1); }
+.cert-corner-br-sm   { bottom: 4.5%; right: 5.5%; width: 4%; aspect-ratio: 1; background: var(--c3); }
+
+.cert-border {
+  position: absolute;
+  top: 2.5%; left: 2.5%; right: 2.5%; bottom: 2.5%;
+  border: 1.5px solid var(--c2);
+  pointer-events: none;
+}
+
+.cert-body {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column;
+  align-items: center;
+  padding: 3% 8% 2%;
+}
+
+.cert-logo-area {
+  display: flex; flex-direction: column; align-items: center;
+  margin-bottom: 1.5%;
+}
+.cert-logo-wt {
+  display: flex; align-items: center; gap: 8px;
+}
+.cert-logo-wt-icon {
+  font-family: var(--font-display);
+  font-size: 2.8cqi; font-weight: 900;
+  color: var(--c2);
+  line-height: 1;
+}
+.cert-logo-wt-text { display: flex; flex-direction: column; }
+.cert-logo-wt-bootcamp {
+  font-family: var(--font-display);
+  font-size: 1.8cqi; font-weight: 700; color: var(--c2); line-height: 1;
+}
+.cert-logo-wt-sub { font-size: 1cqi; color: var(--c2); letter-spacing: 0.06em; font-family: var(--font-body); }
+.cert-cohort-badge {
+  background: var(--c2); color: white;
+  font-size: 1cqi; font-weight: 700; font-family: var(--font-body);
+  padding: 1.5% 4%; border-radius: 4px; margin-top: 4px;
+  letter-spacing: 0.04em;
+}
+
+.cert-title {
+  font-family: var(--font-display);
+  font-size: 5.5cqi; font-weight: 900;
+  color: #1a1a1a; letter-spacing: 0.12em;
+  line-height: 1; margin-bottom: 0.5%;
+  text-align: center;
+}
+.cert-subtitle {
+  font-size: 1.5cqi; font-weight: 400;
+  color: #555; letter-spacing: 0.2em;
+  font-family: var(--font-body);
+  margin-bottom: 2%;
+}
+.cert-intro {
+  font-size: 1.4cqi; color: #555; margin-bottom: 1.5%;
+  font-style: italic;
+}
+.cert-name {
+  font-family: var(--font-display);
+  font-size: 4cqi; font-weight: 700;
+  color: #111; margin-bottom: 0.5%;
+  text-align: center;
+}
+.cert-rule {
+  width: 75%; height: 1px;
+  background: #ccc; margin-bottom: 1.5%;
+}
+.cert-track-text {
+  font-size: 1.2cqi; color: #444; margin-bottom: 0.5%;
+  font-family: var(--font-body); font-style: italic;
+}
+.cert-track {
+  font-size: 1.6cqi; font-weight: 700;
+  color: #111; letter-spacing: 0.12em;
+  font-family: var(--font-body);
+  margin-bottom: 2%;
+}
+
+/* signatures row */
+.cert-sigs {
+  display: flex; align-items: flex-end; justify-content: space-between;
+  width: 80%; margin-bottom: 1%;
+}
+.cert-sig { display: flex; flex-direction: column; align-items: center; width: 35%; }
+.cert-sig-line {
+  width: 100%; height: 1px; background: #aaa; margin-bottom: 4px;
+}
+.cert-sig-script {
+  font-family: 'Brush Script MT', 'Dancing Script', cursive;
+  font-size: 2.5cqi; color: #111;
+  margin-bottom: 2px; min-height: 3.5cqi;
+}
+.cert-sig-name {
+  font-size: 1.1cqi; font-weight: 700;
+  color: var(--c2); font-family: var(--font-body);
+  text-align: center;
+}
+.cert-sig-title { font-size: 0.9cqi; color: #666; font-family: var(--font-body); text-align: center; }
+
+/* wax seal */
+.cert-seal {
+  width: 13%; aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #d4a034, #a0712a 60%, #7a5220);
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.3), inset 0 2px 4px rgba(255,255,255,0.2);
+  position: relative; flex-shrink: 0;
+}
+.cert-seal-text {
+  font-size: 0.85cqi; font-weight: 700; color: rgba(255,255,255,0.9);
+  letter-spacing: 0.08em; font-family: var(--font-body);
+  text-align: center; line-height: 1.2; text-shadow: 0 1px 2px rgba(0,0,0,0.4);
+}
+
+.cert-date {
+  font-size: 1.4cqi; font-weight: 700;
+  color: var(--c2); letter-spacing: 0.1em;
+  font-family: var(--font-body);
+  margin-bottom: 1.5%;
+}
+
+.cert-footer-rule {
+  width: 80%; height: 1px; background: #e0e0e0; margin-bottom: 1.2%;
+}
+.cert-footer {
+  display: flex; align-items: center; gap: 2.5%;
+  font-size: 0.85cqi; color: #888; font-family: var(--font-body);
+}
+.cert-footer-item { display: flex; align-items: center; gap: 4px; white-space: nowrap; }
+.cert-footer-item strong { color: #333; font-size: 0.9cqi; }
+.cert-footer-sep { color: #ccc; }
+
+/* ── BDEI TEMPLATE ── */
+.cert-bdei {
+  --c1: #1A7F4B;
+  --c2: #0F5C35;
+  --c3: #A8D8B9;
+}
+.cert-bdei .cert-corner-tl-big,
+.cert-bdei .cert-corner-br-big { background: var(--c2); }
+.cert-bdei .cert-corner-tl-sm,
+.cert-bdei .cert-corner-br-sm  { background: var(--c3); }
+.cert-bdei .cert-corner-tr-sm  { position: absolute; top: 4.5%; right: 5.5%; width: 4%; aspect-ratio:1; background: var(--c3); }
+.cert-bdei .cert-corner-bl-sm  { position: absolute; bottom: 4.5%; left: 5.5%; width: 4%; aspect-ratio:1; background: var(--c3); }
+
+.cert-bdei-band {
+  position: absolute; top: 0; left: 0; right: 0; height: 12%;
+  background: linear-gradient(135deg, var(--c2), var(--c1));
+  display: flex; align-items: center; justify-content: center; gap: 12px;
+}
+.cert-bdei-band-text {
+  font-family: var(--font-display); font-size: 2.5cqi;
+  font-weight: 900; color: white; letter-spacing: 0.08em;
+}
+.cert-bdei-band-sub {
+  font-size: 1cqi; color: rgba(255,255,255,0.7);
+  font-family: var(--font-body); letter-spacing: 0.12em;
+}
+.cert-bdei .cert-body { padding-top: 15%; }
+.cert-bdei .cert-sig-name { color: var(--c1); }
+.cert-bdei .cert-date { color: var(--c1); }
+.cert-bdei .cert-border { border-color: var(--c1); }
+.cert-bdei .cert-cohort-badge { background: var(--c1); }
+.cert-bdei .cert-logo-wt-icon,
+.cert-bdei .cert-logo-wt-bootcamp,
+.cert-bdei .cert-logo-wt-sub { color: var(--c1); }
+
+/* ── DEVELOPERS FOUNDRY TEMPLATE ── */
+.cert-df {
+  --c1: #0A2463;
+  --c2: #1A5EBF;
+  --c3: #F5C518;
+}
+.cert-df .cert-corner-tl-big,
+.cert-df .cert-corner-br-big { background: var(--c1); }
+.cert-df .cert-corner-tl-sm,
+.cert-df .cert-corner-br-sm  { background: var(--c3); }
+
+.cert-df-sidebar {
+  position: absolute; left: 0; top: 0; bottom: 0; width: 8%;
+  background: linear-gradient(180deg, var(--c1), var(--c2));
+  display: flex; flex-direction: column; align-items: center;
+  justify-content: center;
+}
+.cert-df-sidebar-text {
+  writing-mode: vertical-rl; text-orientation: mixed;
+  transform: rotate(180deg);
+  font-family: var(--font-display); font-size: 1.2cqi;
+  font-weight: 700; color: var(--c3); letter-spacing: 0.15em;
+}
+.cert-df-accent-top {
+  position: absolute; top: 0; left: 8%; right: 0; height: 1%;
+  background: var(--c3);
+}
+.cert-df-accent-bot {
+  position: absolute; bottom: 0; left: 8%; right: 0; height: 1%;
+  background: var(--c3);
+}
+.cert-df .cert-body { padding-left: 12%; }
+.cert-df .cert-border { left: 9%; border-color: var(--c2); }
+.cert-df .cert-sig-name { color: var(--c2); }
+.cert-df .cert-date { color: var(--c2); }
+.cert-df .cert-logo-wt-icon,
+.cert-df .cert-logo-wt-bootcamp { color: var(--c2); }
+.cert-df .cert-cohort-badge { background: var(--c1); }
+.cert-df .cert-logo-wt-sub { color: var(--c2); }
+
+/* ── PRINT STYLES ── */
+@media print {
+  #landing, .app-nav, .left-panel, .cert-toolbar, .right-panel { display: none !important; }
+  body { background: white !important; }
+  #app { display: block !important; }
+  .app-body { display: block !important; }
+  .right-panel { display: block !important; padding: 0 !important; background: white !important; }
+  .certificate {
+    width: 100vw !important; height: 100vh !important;
+    aspect-ratio: unset !important; box-shadow: none !important;
+    transform: none !important;
+  }
+}
+
+/* scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--lgray); border-radius: 3px; }
+
+/* toast */
+.toast {
+  position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+  background: var(--navy); color: white; padding: 12px 24px;
+  border-radius: 100px; font-size: 13px; font-weight: 500;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.3); z-index: 9999;
+  opacity: 0; transition: opacity 0.3s; pointer-events: none;
+}
+.toast.show { opacity: 1; }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════
+     LANDING PAGE
+════════════════════════════════════════ -->
+<div id="landing">
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+
+  <div class="landing-inner">
+    <div class="brand-logo">
+      <span>TECH4DEV</span> · Certificate Generator
+    </div>
+
+    <h1 class="landing-title">Generate Beautiful<br/>Certificates Instantly</h1>
+    <p class="landing-sub">Upload a CSV, select a programme, and download print-ready certificates<br/>for every participant in seconds — no design tools needed.</p>
+
+    <div class="program-grid">
+      <div class="prog-card wt" onclick="startApp('wt')">
+        <span class="prog-card-arrow">↗</span>
+        <span class="prog-card-icon">👩‍💻</span>
+        <div class="prog-card-name">Women Techsters</div>
+        <div class="prog-card-desc">Bootcamp Certificate of Completion</div>
+      </div>
+      <div class="prog-card wl" onclick="startApp('wl')">
+        <span class="prog-card-arrow">↗</span>
+        <span class="prog-card-icon">🚀</span>
+        <div class="prog-card-name">WT Launchpad</div>
+        <div class="prog-card-desc">Launchpad Certificate of Completion</div>
+      </div>
+      <div class="prog-card bdei" onclick="startApp('bdei')">
+        <span class="prog-card-arrow">↗</span>
+        <span class="prog-card-icon">📱</span>
+        <div class="prog-card-name">BDEI</div>
+        <div class="prog-card-desc">Basic Digital Education Initiative</div>
+      </div>
+      <div class="prog-card df" onclick="startApp('df')">
+        <span class="prog-card-arrow">↗</span>
+        <span class="prog-card-icon">⚙️</span>
+        <div class="prog-card-name">Developers Foundry</div>
+        <div class="prog-card-desc">Technical Excellence Certificate</div>
+      </div>
+    </div>
+
+    <button class="cta-btn" onclick="startApp('wt')">
+      Open Certificate Generator →
+    </button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     APP
+════════════════════════════════════════ -->
+<div id="app">
+  <nav class="app-nav">
+    <div class="nav-logo">Tech4Dev <span>Certificates</span></div>
+    <button class="nav-back" onclick="goLanding()">← Back to Programs</button>
+  </nav>
+
+  <div class="app-body">
+    <!-- LEFT PANEL -->
+    <div class="left-panel">
+
+      <!-- PROGRAM SELECT -->
+      <div class="panel-section">
+        <div class="panel-section-head">
+          <div class="dot" style="background:var(--purple)"></div>
+          Programme
+        </div>
+        <div class="panel-section-body">
+          <div class="form-row">
+            <label>Select Programme</label>
+            <select id="prog-select" onchange="onProgramChange()">
+              <option value="wt">Women Techsters Bootcamp</option>
+              <option value="wl">Women Techsters Launchpad</option>
+              <option value="bdei">BDEI — Basic Digital Education Initiative</option>
+              <option value="df">Developers Foundry</option>
+            </select>
+          </div>
+          <div id="prog-badge-wrap"></div>
+          <div class="form-row">
+            <label>Cohort / Batch</label>
+            <input type="text" id="cohort" value="5.0" oninput="refreshCert()"/>
+          </div>
+          <div class="form-row" id="track-row">
+            <label>Track / Specialisation</label>
+            <select id="track-select" onchange="refreshCert()">
+              <option>Frontend Development</option>
+              <option>Backend Development</option>
+              <option>Data Analysis</option>
+              <option>Product Management</option>
+              <option selected>Technical Project Management</option>
+              <option>UI/UX Design</option>
+              <option>Cybersecurity</option>
+              <option>Cloud Computing</option>
+            </select>
+          </div>
+          <div class="form-row">
+            <label>Completion Date</label>
+            <input type="date" id="cert-date" oninput="refreshCert()"/>
+          </div>
+        </div>
+      </div>
+
+      <!-- PARTICIPANT NAMES -->
+      <div class="panel-section">
+        <div class="panel-section-head">
+          <div class="dot" style="background:var(--navy)"></div>
+          Participant Names
+        </div>
+        <div class="panel-section-body">
+          <div class="name-tabs">
+            <button class="name-tab active" onclick="switchNameTab('manual', this)">✏️ Manual</button>
+            <button class="name-tab" onclick="switchNameTab('csv', this)">📄 CSV Upload</button>
+          </div>
+
+          <div id="name-manual">
+            <div class="form-row">
+              <label>Type or paste names (one per line)</label>
+              <textarea id="names-textarea" placeholder="Peace Gift Edeyaru&#10;Ada Okonkwo&#10;Chioma Nwosu" oninput="parseTextareaNames()"></textarea>
+            </div>
+          </div>
+
+          <div id="name-csv" style="display:none">
+            <label class="file-drop" for="csv-input">
+              <input type="file" id="csv-input" accept=".csv,.txt" onchange="handleCSV(this)"/>
+              <div class="file-drop-icon">📂</div>
+              <div class="file-drop-text">
+                <strong>Click to upload CSV</strong><br/>
+                First column = First Name, Second = Last Name<br/>
+                or a single full name column
+              </div>
+            </label>
+          </div>
+
+          <div id="names-list-wrap" style="margin-top:10px; display:none">
+            <div style="font-size:11px;font-weight:600;color:var(--gray);margin-bottom:6px;text-transform:uppercase;letter-spacing:0.05em;">Loaded Names</div>
+            <div class="names-list" id="names-list"></div>
+            <div class="name-nav">
+              <button class="name-nav-btn" onclick="prevName()">← Prev</button>
+              <button class="name-nav-btn" onclick="nextName()">Next →</button>
+            </div>
+            <div class="name-counter" id="name-counter"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SIGNATURES -->
+      <div class="panel-section">
+        <div class="panel-section-head">
+          <div class="dot" style="background:var(--navy)"></div>
+          Signatories
+        </div>
+        <div class="panel-section-body">
+          <div class="sig-row">
+            <div class="form-row">
+              <label>Signatory 1</label>
+              <select id="sig1" onchange="refreshCert()">
+                <option value="Olabisi Etuk|Programs Lead, Women Techsters">Olabisi Etuk</option>
+                <option value="Oladiwura Oladepo|Co-Founder/Executive Director, Tech4Dev">Oladiwura Oladepo</option>
+                <option value="Seun Abolaji|Head of Programmes, Tech4Dev">Seun Abolaji</option>
+                <option value="Custom|Custom">Custom...</option>
+              </select>
+              <div class="cert-sig-script" id="sig1-preview">Olabisi</div>
+            </div>
+            <div class="form-row">
+              <label>Signatory 2</label>
+              <select id="sig2" onchange="refreshCert()">
+                <option value="Oladiwura Oladepo|Co-Founder/Executive Director, Tech4Dev">Oladiwura Oladepo</option>
+                <option value="Olabisi Etuk|Programs Lead, Women Techsters">Olabisi Etuk</option>
+                <option value="Seun Abolaji|Head of Programmes, Tech4Dev">Seun Abolaji</option>
+                <option value="Custom|Custom">Custom...</option>
+              </select>
+              <div class="cert-sig-script" id="sig2-preview">Oladiwura</div>
+            </div>
+          </div>
+          <div id="custom-sig-wrap" style="display:none">
+            <div class="form-row">
+              <label>Custom Name | Title (pipe separated)</label>
+              <input type="text" id="custom-sig-input" placeholder="Full Name|Their Title" oninput="refreshCert()"/>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ACTIONS -->
+      <div class="panel-section">
+        <div class="panel-section-head">
+          <div class="dot" style="background:var(--green)"></div>
+          Download
+        </div>
+        <div class="panel-section-body action-row">
+          <button class="btn-primary btn-download" onclick="downloadCurrent()">
+            ⬇️ Download Current Certificate (PDF)
+          </button>
+          <button class="btn-primary btn-download-all" onclick="downloadAll()" id="dl-all-btn" style="display:none">
+            📦 Download All (<span id="dl-all-count">0</span>) Certificates
+          </button>
+          <button class="btn-primary btn-outline" onclick="window.print()">
+            🖨️ Print Current
+          </button>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- RIGHT PANEL — certificate preview -->
+    <div class="right-panel">
+      <div class="cert-wrapper">
+        <div class="cert-toolbar">
+          <span class="cert-label">Live Preview</span>
+          <div class="cert-zoom">
+            <button class="zoom-btn" onclick="zoomCert(0.85)">−</button>
+            <button class="zoom-btn" onclick="zoomCert(1)">Reset</button>
+            <button class="zoom-btn" onclick="zoomCert(1.15)">+</button>
+          </div>
+        </div>
+        <div id="cert-preview">
+          <!-- injected by JS -->
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ═══════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════
+const state = {
+  program: 'wt',
+  names: [],
+  currentIdx: 0,
+  zoom: 1,
+};
+
+const PROGRAMS = {
+  wt: {
+    name: 'Women Techsters Bootcamp',
+    short: 'WT Bootcamp',
+    color: '#7B2D8B',
+    badge: '#7B2D8B',
+    certClass: 'cert-wt',
+    duration: '3-month',
+    intro: 'The Women Techsters initiative certifies',
+    trackLabel: 'for successfully completing a 3-month Bootcamp training in',
+    showTrack: true,
+  },
+  wl: {
+    name: 'Women Techsters Launchpad',
+    short: 'WT Launchpad',
+    color: '#9B35AE',
+    badge: '#9B35AE',
+    certClass: 'cert-wl',
+    duration: '12-week',
+    intro: 'The Women Techsters initiative certifies',
+    trackLabel: 'for successfully completing the Women Techsters Launchpad in',
+    showTrack: true,
+  },
+  bdei: {
+    name: 'Basic Digital Education Initiative',
+    short: 'BDEI',
+    color: '#1A7F4B',
+    badge: '#1A7F4B',
+    certClass: 'cert-bdei',
+    duration: '6-week',
+    intro: 'The Basic Digital Education Initiative (BDEI) certifies',
+    trackLabel: 'for successfully completing the Basic Digital Education Initiative in',
+    showTrack: false,
+  },
+  df: {
+    name: 'Developers Foundry',
+    short: 'Dev Foundry',
+    color: '#1A5EBF',
+    badge: '#1A5EBF',
+    certClass: 'cert-df',
+    duration: '12-week',
+    intro: 'The Tech4Dev Developers Foundry certifies',
+    trackLabel: 'for successfully completing the Developers Foundry programme in',
+    showTrack: true,
+  },
+};
+
+const SIGNATURES = {
+  'Olabisi Etuk|Programs Lead, Women Techsters': { first: 'Olabisi', script: 'Olabisi' },
+  'Oladiwura Oladepo|Co-Founder/Executive Director, Tech4Dev': { first: 'Oladiwura', script: 'Oladiwura' },
+  'Seun Abolaji|Head of Programmes, Tech4Dev': { first: 'Seun', script: 'Seun' },
+};
+
+// ═══════════════════════════════════════════
+// NAVIGATION
+// ═══════════════════════════════════════════
+function startApp(prog) {
+  document.getElementById('landing').style.display = 'none';
+  document.getElementById('app').style.display = 'flex';
+  document.getElementById('prog-select').value = prog;
+  // set today's date
+  const today = new Date().toISOString().split('T')[0];
+  document.getElementById('cert-date').value = today;
+  onProgramChange();
+}
+
+function goLanding() {
+  document.getElementById('app').style.display = 'none';
+  document.getElementById('landing').style.display = 'flex';
+}
+
+// ═══════════════════════════════════════════
+// PROGRAM CHANGE
+// ═══════════════════════════════════════════
+function onProgramChange() {
+  const prog = document.getElementById('prog-select').value;
+  state.program = prog;
+  const p = PROGRAMS[prog];
+
+  // badge
+  document.getElementById('prog-badge-wrap').innerHTML = `
+    <div class="prog-badge" style="background:${p.badge}20;color:${p.badge};border:1px solid ${p.badge}40">
+      ${p.name}
+    </div>`;
+
+  // track visibility
+  document.getElementById('track-row').style.display = p.showTrack ? 'block' : 'none';
+
+  refreshCert();
+}
+
+// ═══════════════════════════════════════════
+// NAME HANDLING
+// ═══════════════════════════════════════════
+function switchNameTab(tab, el) {
+  document.querySelectorAll('.name-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('name-manual').style.display = tab === 'manual' ? 'block' : 'none';
+  document.getElementById('name-csv').style.display = tab === 'csv' ? 'block' : 'none';
+}
+
+function parseTextareaNames() {
+  const raw = document.getElementById('names-textarea').value;
+  const names = raw.split('\n').map(n => n.trim()).filter(n => n.length > 0);
+  setNames(names);
+}
+
+function handleCSV(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    const lines = e.target.result.split('\n').filter(l => l.trim());
+    const names = lines.map(line => {
+      const parts = line.split(',').map(p => p.trim().replace(/"/g, ''));
+      if (parts.length >= 2 && parts[0] && parts[1]) {
+        return `${parts[0]} ${parts[1]}`;
+      }
+      return parts[0] || '';
+    }).filter(n => n.length > 0);
+    setNames(names);
+    showToast(`✅ Loaded ${names.length} names from CSV`);
+  };
+  reader.readAsText(file);
+}
+
+function setNames(names) {
+  state.names = names;
+  state.currentIdx = 0;
+  renderNamesList();
+  if (names.length > 0) {
+    document.getElementById('names-list-wrap').style.display = 'block';
+    document.getElementById('dl-all-btn').style.display = 'flex';
+    document.getElementById('dl-all-count').textContent = names.length;
+  } else {
+    document.getElementById('names-list-wrap').style.display = 'none';
+    document.getElementById('dl-all-btn').style.display = 'none';
+  }
+  refreshCert();
+}
+
+function renderNamesList() {
+  const list = document.getElementById('names-list');
+  list.innerHTML = state.names.map((n, i) => `
+    <div class="name-chip ${i === state.currentIdx ? 'active' : ''}" onclick="selectName(${i})">
+      <span>${n}</span>
+      <div class="name-chip-btns">
+        <button class="chip-btn" onclick="event.stopPropagation();removeName(${i})">✕</button>
+      </div>
+    </div>`).join('');
+  document.getElementById('name-counter').textContent =
+    state.names.length > 0 ? `${state.currentIdx + 1} of ${state.names.length}` : '';
+}
+
+function selectName(i) {
+  state.currentIdx = i;
+  renderNamesList();
+  refreshCert();
+}
+
+function removeName(i) {
+  state.names.splice(i, 1);
+  if (state.currentIdx >= state.names.length) state.currentIdx = Math.max(0, state.names.length - 1);
+  setNames(state.names);
+}
+
+function prevName() {
+  if (state.names.length === 0) return;
+  state.currentIdx = (state.currentIdx - 1 + state.names.length) % state.names.length;
+  renderNamesList();
+  refreshCert();
+}
+
+function nextName() {
+  if (state.names.length === 0) return;
+  state.currentIdx = (state.currentIdx + 1) % state.names.length;
+  renderNamesList();
+  refreshCert();
+}
+
+function getCurrentName() {
+  if (state.names.length > 0) return state.names[state.currentIdx];
+  return 'Participant Full Name';
+}
+
+// ═══════════════════════════════════════════
+// SIGNATURES
+// ═══════════════════════════════════════════
+function getSig(id) {
+  const val = document.getElementById(id).value;
+  if (val === 'Custom|Custom') {
+    const custom = document.getElementById('custom-sig-input').value;
+    const parts = custom.split('|');
+    return { name: parts[0] || 'Name', title: parts[1] || 'Title', script: parts[0]?.split(' ')[0] || 'Sig' };
+  }
+  const parts = val.split('|');
+  return { name: parts[0], title: parts[1], script: parts[0].split(' ')[0] };
+}
+
+document.getElementById('sig1').addEventListener('change', () => {
+  const sig = getSig('sig1');
+  document.getElementById('sig1-preview').textContent = sig.script;
+  const hasCustom = document.getElementById('sig1').value === 'Custom|Custom'
+    || document.getElementById('sig2').value === 'Custom|Custom';
+  document.getElementById('custom-sig-wrap').style.display = hasCustom ? 'block' : 'none';
+  refreshCert();
+});
+
+document.getElementById('sig2').addEventListener('change', () => {
+  const sig = getSig('sig2');
+  document.getElementById('sig2-preview').textContent = sig.script;
+  const hasCustom = document.getElementById('sig1').value === 'Custom|Custom'
+    || document.getElementById('sig2').value === 'Custom|Custom';
+  document.getElementById('custom-sig-wrap').style.display = hasCustom ? 'block' : 'none';
+  refreshCert();
+});
+
+// ═══════════════════════════════════════════
+// DATE FORMATTING
+// ═══════════════════════════════════════════
+function formatDate(dateStr) {
+  if (!dateStr) return 'DATE';
+  const d = new Date(dateStr + 'T00:00:00');
+  const day = d.getDate();
+  const suffix = day === 1 || day === 21 || day === 31 ? 'ST'
+    : day === 2 || day === 22 ? 'ND'
+    : day === 3 || day === 23 ? 'RD' : 'TH';
+  const months = ['JANUARY','FEBRUARY','MARCH','APRIL','MAY','JUNE','JULY','AUGUST','SEPTEMBER','OCTOBER','NOVEMBER','DECEMBER'];
+  return `${day}${suffix} ${months[d.getMonth()]} ${d.getFullYear()}`;
+}
+
+// ═══════════════════════════════════════════
+// CERTIFICATE RENDERING
+// ═══════════════════════════════════════════
+function renderCert(name, prog, cohort, track, dateStr, sig1, sig2) {
+  const p = PROGRAMS[prog];
+  const date = formatDate(dateStr);
+
+  const baseCorners = `
+    <div class="cert-corner cert-corner-tl-big"></div>
+    <div class="cert-corner cert-corner-tl-sm"></div>
+    <div class="cert-corner cert-corner-br-big"></div>
+    <div class="cert-corner cert-corner-br-sm"></div>
+    <div class="cert-border"></div>`;
+
+  const logoArea = prog === 'bdei'
+    ? `<div class="cert-logo-area">
+        <div class="cert-cohort-badge">BDEI · COHORT ${cohort}</div>
+       </div>`
+    : prog === 'df'
+    ? `<div class="cert-logo-area">
+        <div class="cert-logo-wt"><div class="cert-logo-wt-icon">⚙</div>
+        <div class="cert-logo-wt-text">
+          <div class="cert-logo-wt-bootcamp">Developers Foundry</div>
+          <div class="cert-logo-wt-sub">TECH4DEV</div>
+        </div></div>
+        <div class="cert-cohort-badge">COHORT ${cohort}</div>
+       </div>`
+    : `<div class="cert-logo-area">
+        <div class="cert-logo-wt">
+          <div class="cert-logo-wt-icon">Wt</div>
+          <div class="cert-logo-wt-text">
+            <div class="cert-logo-wt-bootcamp">${prog === 'wl' ? 'Launchpad' : 'Bootcamp'}</div>
+            <div class="cert-logo-wt-sub">women techsters</div>
+          </div>
+        </div>
+        <div class="cert-cohort-badge">Cohort ${cohort}</div>
+       </div>`;
+
+  const trackSection = p.showTrack
+    ? `<div class="cert-track-text">${p.trackLabel}</div>
+       <div class="cert-track">${track.toUpperCase()}</div>`
+    : `<div class="cert-track-text">${p.trackLabel}</div>`;
+
+  const bdeiExtras = prog === 'bdei'
+    ? `<div class="cert-corner cert-corner-tr-sm"></div>
+       <div class="cert-corner cert-corner-bl-sm"></div>
+       <div class="cert-bdei-band">
+         <div>
+           <div class="cert-bdei-band-text">BASIC DIGITAL EDUCATION</div>
+           <div class="cert-bdei-band-sub">INITIATIVE · TECH4DEV</div>
+         </div>
+       </div>` : '';
+
+  const dfExtras = prog === 'df'
+    ? `<div class="cert-df-sidebar"><div class="cert-df-sidebar-text">DEVELOPERS FOUNDRY</div></div>
+       <div class="cert-df-accent-top"></div>
+       <div class="cert-df-accent-bot"></div>` : '';
+
+  return `
+    <div class="certificate ${p.certClass}">
+      ${baseCorners}
+      ${bdeiExtras}
+      ${dfExtras}
+      <div class="cert-body">
+        ${logoArea}
+        <div class="cert-title">CERTIFICATE</div>
+        <div class="cert-subtitle">OF COMPLETION</div>
+        <div class="cert-intro">${p.intro}</div>
+        <div class="cert-name">${name}</div>
+        <div class="cert-rule"></div>
+        ${trackSection}
+        <div class="cert-sigs">
+          <div class="cert-sig">
+            <div class="cert-sig-script">${sig1.script}</div>
+            <div class="cert-sig-line"></div>
+            <div class="cert-sig-name">${sig1.name}</div>
+            <div class="cert-sig-title">${sig1.title}</div>
+          </div>
+          <div class="cert-seal">
+            <div class="cert-seal-text">TECH<br/>4DEV</div>
+          </div>
+          <div class="cert-sig">
+            <div class="cert-sig-script">${sig2.script}</div>
+            <div class="cert-sig-line"></div>
+            <div class="cert-sig-name">${sig2.name}</div>
+            <div class="cert-sig-title">${sig2.title}</div>
+          </div>
+        </div>
+        <div class="cert-date">${date}</div>
+        <div class="cert-footer-rule"></div>
+        <div class="cert-footer">
+          <div class="cert-footer-item">An Initiative of: <strong>TECH4DEV</strong></div>
+          <div class="cert-footer-sep">·</div>
+          <div class="cert-footer-item">Funded By: <strong>Internet Society Foundation</strong></div>
+          <div class="cert-footer-sep">·</div>
+          <div class="cert-footer-item">Supported By: <strong>Taltrix</strong></div>
+        </div>
+      </div>
+    </div>`;
+}
+
+function refreshCert() {
+  const prog = document.getElementById('prog-select').value;
+  const cohort = document.getElementById('cohort').value || '1.0';
+  const track = document.getElementById('track-select').value;
+  const dateStr = document.getElementById('cert-date').value;
+  const sig1 = getSig('sig1');
+  const sig2 = getSig('sig2');
+  const name = getCurrentName();
+
+  document.getElementById('cert-preview').innerHTML =
+    renderCert(name, prog, cohort, track, dateStr, sig1, sig2);
+}
+
+// ═══════════════════════════════════════════
+// ZOOM
+// ═══════════════════════════════════════════
+function zoomCert(scale) {
+  state.zoom = scale;
+  const cert = document.querySelector('.certificate');
+  if (cert) cert.style.transform = `scale(${scale})`;
+}
+
+// ═══════════════════════════════════════════
+// DOWNLOAD
+// ═══════════════════════════════════════════
+function downloadCurrent() {
+  window.print();
+  showToast('🖨️ Opening print dialog — choose Save as PDF');
+}
+
+function downloadAll() {
+  if (state.names.length === 0) { showToast('No names loaded!'); return; }
+  showToast(`📦 Printing ${state.names.length} certificates one by one...`);
+  let i = 0;
+  function printNext() {
+    if (i >= state.names.length) { showToast('✅ All done!'); return; }
+    selectName(i);
+    setTimeout(() => { window.print(); i++; setTimeout(printNext, 1500); }, 400);
+  }
+  printNext();
+}
+
+// ═══════════════════════════════════════════
+// TOAST
+// ═══════════════════════════════════════════
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+// ═══════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════
+window.addEventListener('DOMContentLoaded', () => {
+  const today = new Date().toISOString().split('T')[0];
+  document.getElementById('cert-date').value = today;
+  onProgramChange();
+});
+</script>
+</body>
+</html>
